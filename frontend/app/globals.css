@@ -1,0 +1,190 @@
+@import "tailwindcss";
+
+* {
+  font-family: 'Plus Jakarta Sans', 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+:root {
+  --background: #030712;
+  --foreground: #f3f4f6;
+  --card-bg: rgba(17, 24, 39, 0.7);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --neon-green: #10b981;
+  --neon-green-glow: rgba(16, 185, 129, 0.3);
+  --neon-orange: #f97316;
+  --neon-cyan: #06b6d4;
+  --accent: #22c55e;
+}
+
+body {
+  background-color: var(--background);
+  background-image: linear-gradient(rgba(3, 7, 18, 0.9), rgba(3, 7, 18, 0.95)), url('/bg-neon.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Parallax scrolling effect */
+  color: var(--foreground);
+  font-family: 'Plus Jakarta Sans', 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(17, 24, 39, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--card-border);
+}
+
+.glass-card {
+  background: linear-gradient(135deg, rgba(31, 41, 55, 0.2) 0%, rgba(17, 24, 39, 0.4) 100%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.1);
+  transform: translateY(-2px);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  transition: all 0.2s ease;
+}
+
+.glass-input:focus {
+  border-color: var(--neon-green);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  outline: none;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(3, 7, 18, 0.8);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-green);
+}
+
+/* Neon Text & Border Glows */
+.text-neon-glow {
+  text-shadow: 0 0 10px var(--neon-green-glow);
+}
+
+.border-neon-glow {
+  box-shadow: 0 0 15px var(--neon-green-glow);
+}
+
+/* Pulse Animations for QR scanner & dots */
+@keyframes qr-scan {
+  0%, 100% {
+    top: 5%;
+  }
+  50% {
+    top: 95%;
+  }
+}
+
+.animate-scan-line {
+  position: absolute;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+  box-shadow: 0 0 12px var(--accent);
+  animation: qr-scan 2.5s infinite linear;
+}
+
+/* Mobile-app-like Hide Scrollbars for tabs */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Bottom Nav highlight effect */
+.nav-active-bubble {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 4px;
+  border-radius: 9999px;
+  background-color: var(--neon-green);
+  box-shadow: 0 0 8px var(--neon-green);
+}
+
+/* Continuous Infinite Marquee Animation for Ticker Layouts */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 15s linear infinite;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Lenis Smooth Scroll Support */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
