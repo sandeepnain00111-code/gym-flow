@@ -58,7 +58,7 @@ export default function AdminMembers() {
     const fetchUsers = async () => {
       try {
         const res = await api.get('/admin/users');
-        if (res.data.success && res.data.users && res.data.users.length > 0) {
+        if (res.data.success && Array.isArray(res.data.users)) {
           setUsers(res.data.users);
         }
       } catch (err) {

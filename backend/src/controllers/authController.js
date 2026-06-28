@@ -236,21 +236,60 @@ exports.forgotPassword = async (req, res, next) => {
     // Send password reset email
     await sendEmail({
       to: user.email,
-      subject: '🔐 GymFlow — Reset Your Password',
+      subject: '🔐 Reset Your GymFlow Password',
       html: `
-        <div style="font-family:sans-serif;max-width:480px;margin:auto">
-          <h2 style="color:#047857">Password Reset Request</h2>
-          <p>Hi <strong>${user.name}</strong>,</p>
-          <p>We received a request to reset your GymFlow password. Click the button below to set a new password. This link expires in <strong>30 minutes</strong>.</p>
-          <a href="${resetUrl}" style="display:inline-block;margin:16px 0;padding:12px 24px;background:#047857;color:#fff;border-radius:8px;text-decoration:none;font-weight:bold">
-            Reset Password
-          </a>
-          <p>If you didn't request this, you can safely ignore this email.</p>
-          <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0"/>
-          <p style="color:#9ca3af;font-size:12px">GymFlow SaaS — One QR. Complete Gym Management.</p>
-        </div>
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #1e293b; }
+            .card { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01); border: 1px solid #e2e8f0; }
+            .header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 36px 28px; text-align: center; }
+            .header-badge { display: inline-block; background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; padding: 5px 14px; border-radius: 50px; margin-bottom: 12px; }
+            .header h1 { color: #ffffff; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: -0.5px; }
+            .body { padding: 32px 28px; text-align: left; }
+            .greeting { font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 12px; }
+            .text { font-size: 15px; line-height: 1.6; color: #475569; margin-bottom: 28px; }
+            .cta-wrapper { text-align: center; margin: 32px 0; }
+            .cta-btn { display: inline-block; background: linear-gradient(135deg, #047857, #10b981); color: #ffffff !important; font-weight: 800; font-size: 15px; padding: 16px 36px; border-radius: 14px; text-decoration: none; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35); }
+            .warning { background: #fffbeb; border: 1px solid #fef3c7; border-radius: 12px; padding: 16px; font-size: 13px; color: #b45309; line-height: 1.5; margin-top: 24px; }
+            .footer { background: #f8fafc; border-top: 1px solid #f1f5f9; padding: 20px 28px; text-align: center; font-size: 12px; color: #94a3b8; }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <div class="header">
+              <div class="header-badge">Account Security</div>
+              <h1>Password Reset Request</h1>
+            </div>
+            <div class="body">
+              <div class="greeting">Hi ${user.name},</div>
+              <div class="text">
+                We received a request to reset your password for your GymFlow account. Click the button below to secure your account and set a new password. This link is valid for <strong>30 minutes</strong>.
+              </div>
+
+              <div class="cta-wrapper">
+                <a href="${resetUrl}" target="_blank" class="cta-btn">Set New Password</a>
+              </div>
+
+              <div style="background:#f1f5f9;padding:14px;border-radius:10px;font-size:12px;color:#475569;word-break:break-all;margin-top:16px;">
+                <strong>Direct Link:</strong><br/>
+                <a href="${resetUrl}" target="_blank" style="color:#059669;font-weight:bold;text-decoration:underline;">${resetUrl}</a>
+              </div>
+
+              <div class="warning">
+                🔒 <strong>Security Notice:</strong> If you did not request a password reset, please ignore this email. Your password will remain unchanged.
+              </div>
+            </div>
+            <div class="footer">
+              © ${new Date().getFullYear()} GymFlow SaaS • One QR. Complete Gym Management.
+            </div>
+          </div>
+        </body>
+        </html>
       `,
-      text: `Reset your GymFlow password: ${resetUrl}\n\nThis link expires in 30 minutes.`
+      text: `Hi ${user.name},\n\nReset your GymFlow password: ${resetUrl}\n\nThis link expires in 30 minutes.`
     });
 
     res.json({

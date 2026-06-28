@@ -62,7 +62,7 @@ export default function OwnersManagement() {
   const fetchOwners = async () => {
     try {
       const res = await api.get('/admin/owners');
-      if (res.data.success && res.data.owners && res.data.owners.length > 0) {
+      if (res.data.success && Array.isArray(res.data.owners)) {
         const ownersWithAvatars = res.data.owners.map((owner, idx) => ({
           ...owner,
           avatar: owner.avatar || DUMMY_OWNERS[idx % DUMMY_OWNERS.length].avatar

@@ -14,7 +14,7 @@ export default function AttendanceLogs() {
   const fetchAttendance = async () => {
     try {
       const res = await api.get('/owner/attendance');
-      if (res.data.success && res.data.logs && res.data.logs.length > 0) {
+      if (res.data.success && Array.isArray(res.data.logs)) {
         setLogs(res.data.logs);
       } else {
         setLogs(fallbackLogs);

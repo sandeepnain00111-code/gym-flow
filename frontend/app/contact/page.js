@@ -1,12 +1,43 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Loader2 } from 'lucide-react';
+import api from '../../lib/api';
+import { toast } from 'react-hot-toast';
 
 export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    message: ''
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.firstName || !formData.email || !formData.message) {
+      toast.error('Please fill in all required fields (Name, Email, Message)');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await api.post('/public/contact', formData);
+      if (res.data.success) {
+        toast.success(res.data.message || 'Message sent successfully!');
+        setFormData({ firstName: '', lastName: '', email: '', message: '' });
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to send message. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="bg-slate-50 text-slate-800 min-h-screen flex flex-col relative overflow-hidden">
       
@@ -106,31 +137,71 @@ export default function ContactPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="bg-white border border-slate-200 rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-xl shadow-slate-200/50"
           >
-            <form className="space-y-4 md:space-y-6" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div>
-                  <label className="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">First Name</label>
-                  <input type="text" className="w-full px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl border border-slate-200 bg-slate-50 text-xs md:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition" placeholder="John" />
+                  <label className="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">First Name *</label>
+                  <input 
+                    type="text" 
+                    required
+                    value={formData.firstName}
+                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                    className="w-full px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl border border-slate-200 bg-slate-50 text-xs md:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition" 
+                    placeholder="John" 
+                  />
                 </div>
                 <div>
                   <label className="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">Last Name</label>
-                  <input type="text" className="w-full px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl border border-slate-200 bg-slate-50 text-xs md:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition" placeholder="Doe" />
+                  <input 
+                    type="text" 
+                    value={formData.lastName}
+                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                    className="w-full px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl border border-slate-200 bg-slate-50 text-xs md:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition" 
+                    placeholder="Doe" 
+                  />
                 </div>
               </div>
- 
+
               <div>
-                <label className="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">Email Address</label>
-                <input type="email" className="w-full px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl border border-slate-200 bg-slate-50 text-xs md:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition" placeholder="john@example.com" />
+                <label className="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">Email Address *</label>
+                <input 
+                  type="email" 
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl border border-slate-200 bg-slate-50 text-xs md:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition" 
+                  placeholder="john@example.com" 
+                />
               </div>
- 
+
               <div>
-                <label className="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">Message</label>
-                <textarea rows="3" className="w-full px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl border border-slate-200 bg-slate-50 text-xs md:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition" placeholder="How can we help you?"></textarea>
+                <label className="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">Message *</label>
+                <textarea 
+                  rows="3" 
+                  required
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  className="w-full px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl border border-slate-200 bg-slate-50 text-xs md:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition" 
+                  placeholder="How can we help you?"
+                ></textarea>
               </div>
- 
-              <button type="submit" className="w-full py-3 md:py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition flex items-center justify-center space-x-2 text-xs md:text-sm cursor-pointer">
-                <span>Send Message</span>
-                <Send className="w-4 h-4" />
+
+              <button 
+                type="submit" 
+                disabled={loading}
+                className="w-full py-3 md:py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition flex items-center justify-center space-x-2 text-xs md:text-sm cursor-pointer disabled:opacity-70"
+              >
+                {loading ? (
+                  <>
+                    <span>Sending Message...</span>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  </>
+                ) : (
+                  <>
+                    <span>Send Message</span>
+                    <Send className="w-4 h-4" />
+                  </>
+                )}
               </button>
             </form>
           </motion.div>

@@ -16,21 +16,25 @@ export default function GymMembersDirectory() {
     try {
       const res = await api.get('/owner/members');
       if (res.data.success && res.data.members && res.data.members.length > 0) {
-        // Enforce fallback details matching active profile items even for database items
-        const enriched = res.data.members.map((m, idx) => ({
+        // Map members cleanly preserving actual database properties
+        const enriched = res.data.members.map((m) => ({
           ...m,
-          age: m.age || [24, 28, 22, 31, 26, 29][idx % 6],
-          gender: m.gender || ['Male', 'Female', 'Male', 'Male', 'Female', 'Male'][idx % 6],
-          weight: m.weight || ['76 kg', '58 kg', '82 kg', '79 kg', '55 kg', '88 kg'][idx % 6],
-          height: m.height || ['178 cm', '163 cm', '182 cm', '175 cm', '160 cm', '185 cm'][idx % 6],
-          medicalHistory: m.medicalHistory || ['None', 'Slight Asthma', 'None', 'Knee Joint Recovery', 'None', 'None'][idx % 6],
+          memberId: m.memberId || { name: m.name || 'Member', email: m.email || 'N/A', phone: m.phone || 'N/A' },
+          planId: m.membership?.planId || m.planId || { name: 'Standard Plan' },
+          startDate: m.membership?.startDate || m.startDate || m.createdAt || new Date().toISOString(),
+          endDate: m.membership?.endDate || m.endDate || new Date(Date.now() + 30*24*60*60*1000).toISOString(),
+          age: m.age || 'N/A',
+          gender: m.gender || 'Not specified',
+          weight: m.weight || 'N/A',
+          height: m.height || 'N/A',
+          medicalHistory: m.medicalHistory || 'None reported',
           emergencyContact: m.emergencyContact || {
-            name: ['Suresh Sharma', 'Anjali Patel', 'Rajesh Singh', 'Kamlesh Verma', 'Naveen Hegde', 'Sunil Mehra'][idx % 6],
-            relation: ['Father', 'Mother', 'Brother', 'Father', 'Father', 'Brother'][idx % 6],
-            phone: ['+91 99887 76655', '+91 88776 65544', '+91 77665 54433', '+91 95432 10987', '+91 84321 09876', '+91 73210 98765'][idx % 6]
+            name: 'Not provided',
+            relation: 'N/A',
+            phone: 'N/A'
           },
-          address: m.address || 'Street No 3, Park Avenue View, Main Metro Pillar 140, NCR Metro Area',
-          joinedDate: m.startDate || '2026-01-10T00:00:00Z'
+          address: m.address || 'Address not registered',
+          joinedDate: m.createdAt || m.startDate || new Date().toISOString()
         }));
         setMembers(enriched);
       } else {
