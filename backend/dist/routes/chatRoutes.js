@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express = require('express');
+const router = express.Router();
+const { protect } = require('../middlewares/auth');
+const { getRoomMessages, getMessages, postMessage, getDirectMessages, postDirectMessage, getParticipants } = require('../controllers/chatController');
+router.get('/room/:gymId', protect, getRoomMessages);
+router.get('/messages', protect, getMessages);
+router.post('/message', protect, postMessage);
+router.get('/participants', protect, getParticipants);
+router.get('/direct/:recipientId', protect, getDirectMessages);
+router.post('/direct', protect, postDirectMessage);
+module.exports = router;
