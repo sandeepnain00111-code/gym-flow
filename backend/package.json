@@ -4,12 +4,12 @@
   "description": "GymFlow SaaS Backend - Premium Gym Management SaaS API",
   "main": "src/server.ts",
   "scripts": {
-    "build":"tsc --",
+    "build":"tsc",
     "start": "node dist/server.js",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "seed": "ts-node src/seed/seed.ts"
   },
-  
+
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.2.0",
