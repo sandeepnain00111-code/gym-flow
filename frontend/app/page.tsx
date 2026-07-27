@@ -378,14 +378,14 @@ export default function LandingPage() {
             {/* Left/Right Navigation buttons */}
             <button
               onClick={() => setActiveSlide((prev) => (prev - 1 + slides.length) % slides.length)}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-2 md:p-3 rounded-full bg-slate-900/40 hover:bg-emerald-500 text-white hover:text-slate-950 border border-white/10 hover:border-emerald-400 transition-all duration-300 backdrop-blur-md shadow-lg cursor-pointer"
+              className="hidden md:block absolute left-4 top-1/2 -translate-y-1/2 z-30 p-2 md:p-3 rounded-full bg-slate-900/40 hover:bg-emerald-500 text-white hover:text-slate-950 border border-white/10 hover:border-emerald-400 transition-all duration-300 backdrop-blur-md shadow-lg cursor-pointer"
               title="Previous Gym Slide"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
             <button
               onClick={() => setActiveSlide((prev) => (prev + 1) % slides.length)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-2 md:p-3 rounded-full bg-slate-900/40 hover:bg-emerald-500 text-white hover:text-slate-950 border border-white/10 hover:border-emerald-400 transition-all duration-300 backdrop-blur-md shadow-lg cursor-pointer"
+              className="hidden md:block absolute right-4 top-1/2 -translate-y-1/2 z-30 p-2 md:p-3 rounded-full bg-slate-900/40 hover:bg-emerald-500 text-white hover:text-slate-950 border border-white/10 hover:border-emerald-400 transition-all duration-300 backdrop-blur-md shadow-lg cursor-pointer"
               title="Next Gym Slide"
             >
               <ChevronRight className="h-5 w-5" />
@@ -410,7 +410,7 @@ export default function LandingPage() {
       {/* Core Flow Features */}
       <section
         id="features"
-        className="pt-10 pb-28 md:pt-12 relative z-10 border-t border-slate-200 bg-cover bg-center bg-no-repeat"
+        className="pt-10 pb-12 md:pb-28 md:pt-12 relative z-10 border-t border-slate-200 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.95)), url('/bg-white-waves.png')" }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -475,7 +475,7 @@ export default function LandingPage() {
       {/* Owner Benefits Section */}
       <section
         id="owner-benefits"
-        className="py-28 relative z-10 border-t border-b border-slate-200 bg-[#f8fafc] overflow-hidden"
+        className="py-12 md:py-28 relative z-10 border-t border-b border-slate-200 bg-[#f8fafc] overflow-hidden"
       >
         {/* Premium Light SaaS Dot Grid & Glow */}
         <div className="absolute inset-0 z-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#64748b 1.5px, transparent 1.5px)', backgroundSize: '32px 32px' }}></div>

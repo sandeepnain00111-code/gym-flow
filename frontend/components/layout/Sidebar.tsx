@@ -93,11 +93,12 @@ export default function Sidebar() {
       {/* Sidebar Header */}
       <div className="h-16 flex items-center px-6 border-b border-slate-100 bg-white">
         <Link href="/" className="flex items-center space-x-2">
-          <Dumbbell className="h-6 w-6 text-[#10b981]" />
-          <span className="text-lg font-black tracking-tight text-[#0F172A]">
-            GymFlow
-          </span>
-          <span className="text-[10px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
+          <img 
+            src="/logo.png" 
+            alt="GymFlow Logo" 
+            className="h-14 w-auto object-contain"
+          />
+          <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 flex-shrink-0">
             {user.role === 'super_admin' ? 'Admin' : 'SaaS'}
           </span>
         </Link>
