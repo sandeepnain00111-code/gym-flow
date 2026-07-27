@@ -1,7 +1,21 @@
 import { create } from 'zustand';
 import api from '../lib/api';
 
-export const useAuthStore = create((set, get) => ({
+interface AuthState {
+  user: any;
+  accessToken: string | null;
+  isAuthenticated: boolean;
+  loading: boolean;
+  error: string | null;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  checkAuth: () => Promise<void>;
+  login: (email: string, password: string) => Promise<any>;
+  register: (userData: any) => Promise<any>;
+  logout: () => Promise<void>;
+}
+
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   accessToken: null,
   isAuthenticated: false,

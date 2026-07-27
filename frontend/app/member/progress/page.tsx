@@ -14,7 +14,7 @@ export default function BodyProgressTracker() {
   const [submitting, setSubmitting] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<any>();
 
   const fetchProgressLogs = async () => {
     try {
@@ -57,7 +57,7 @@ export default function BodyProgressTracker() {
 
   // Prepare chart data: sort logs by date ascending
   const chartData = [...logs]
-    .sort((a, b) => new Date(a.logDate) - new Date(b.logDate))
+    .sort((a, b) => new Date(a.logDate).getTime() - new Date(b.logDate).getTime())
     .map((log) => ({
       date: new Date(log.logDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
       weight: log.weight,
@@ -69,6 +69,7 @@ export default function BodyProgressTracker() {
     latestLog && latestLog.height
       ? (latestLog.weight / Math.pow(latestLog.height / 100, 2)).toFixed(1)
       : null;
+  const calculatedBMIFloat = calculatedBMI ? parseFloat(calculatedBMI) : null;
 
   if (loading) {
     return (
@@ -115,7 +116,7 @@ export default function BodyProgressTracker() {
                 {...register('weight', { required: 'Weight is required' })}
                 className="w-full px-4 py-2.5 text-xs glass-input rounded-xl"
               />
-              {errors.weight && <p className="text-red-400 text-[10px] mt-1">{errors.weight.message}</p>}
+              {errors.weight && <p className="text-red-400 text-[10px] mt-1">{String(errors.weight.message)}</p>}
             </div>
 
             {/* Height */}
@@ -191,11 +192,11 @@ export default function BodyProgressTracker() {
                 <p className="text-[10px] font-bold text-gray-500 uppercase">Calculated Body Mass Index (BMI)</p>
                 <p className="text-3xl font-black text-cyan-405 mt-2">{calculatedBMI}</p>
                 <p className="text-[9px] font-black uppercase text-emerald-450 mt-1 tracking-wider">
-                  {calculatedBMI < 18.5
+                  {calculatedBMIFloat !== null && calculatedBMIFloat < 18.5
                     ? 'Underweight'
-                    : calculatedBMI < 25
+                    : calculatedBMIFloat !== null && calculatedBMIFloat < 25
                     ? 'Healthy Weight'
-                    : calculatedBMI < 30
+                    : calculatedBMIFloat !== null && calculatedBMIFloat < 30
                     ? 'Overweight'
                     : 'Obesity'}
                 </p>

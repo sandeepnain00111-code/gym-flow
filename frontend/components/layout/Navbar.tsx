@@ -104,30 +104,32 @@ export default function Navbar() {
                 </button>
 
                 {isFeaturesOpen && (
-                  <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[580px] bg-white border border-slate-200 rounded-2xl shadow-xl p-4 grid grid-cols-2 gap-2 z-50 transition-all duration-200">
-                    {featuresList.map((item) => {
-                      const Icon = item.icon;
-                      return (
-                        <Link
-                          key={item.name}
-                          href={item.href}
-                          onClick={() => setIsFeaturesOpen(false)}
-                          className="flex items-start gap-3 p-3 rounded-xl hover:bg-emerald-50/60 transition-all duration-200 group/item"
-                        >
-                          <div className="p-2 rounded-lg bg-emerald-50 text-[#047857] group-hover/item:bg-[#047857] group-hover/item:text-white transition-colors">
-                            <Icon className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-slate-800 group-hover/item:text-[#047857] transition-colors">
-                              {item.name}
-                            </p>
-                            <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
-                              {item.desc}
-                            </p>
-                          </div>
-                        </Link>
-                      );
-                    })}
+                  <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 z-50 transition-all duration-200">
+                    <div className="w-[580px] bg-white border border-slate-200 rounded-2xl shadow-xl p-4 grid grid-cols-2 gap-2">
+                      {featuresList.map((item) => {
+                        const Icon = item.icon;
+                        return (
+                          <Link
+                            key={item.name}
+                            href={item.href}
+                            onClick={() => setIsFeaturesOpen(false)}
+                            className="flex items-start gap-3 p-3 rounded-xl hover:bg-emerald-50/60 transition-all duration-200 group/item"
+                          >
+                            <div className="p-2 rounded-lg bg-emerald-50 text-[#047857] group-hover/item:bg-[#047857] group-hover/item:text-white transition-colors">
+                              <Icon className="h-5 w-5" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-800 group-hover/item:text-[#047857] transition-colors">
+                                {item.name}
+                              </p>
+                              <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
+                                {item.desc}
+                              </p>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
               </div>

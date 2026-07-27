@@ -30,7 +30,7 @@ export default function RegisterPage() {
     if (qr) setRole('member');
   }, []);
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm<any>();
 
   const onSubmit = async (data) => {
     try {
@@ -125,7 +125,7 @@ export default function RegisterPage() {
                   className="w-full pl-12 pr-4 py-3 text-sm bg-white border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#047857]/20 focus:border-[#047857] transition text-slate-800 placeholder-slate-400"
                 />
               </div>
-              {errors.name && <p className="text-red-500 text-xs mt-1.5 ml-4">{errors.name.message}</p>}
+              {errors.name && <p className="text-red-500 text-xs mt-1.5 ml-4">{String(errors.name.message)}</p>}
             </div>
 
             {/* Email Address */}
@@ -143,7 +143,7 @@ export default function RegisterPage() {
                   className="w-full pl-12 pr-4 py-3 text-sm bg-white border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#047857]/20 focus:border-[#047857] transition text-slate-800 placeholder-slate-400"
                 />
               </div>
-              {errors.email && <p className="text-red-500 text-xs mt-1.5 ml-4">{errors.email.message}</p>}
+              {errors.email && <p className="text-red-500 text-xs mt-1.5 ml-4">{String(errors.email.message)}</p>}
             </div>
 
             {/* Phone */}
@@ -164,7 +164,7 @@ export default function RegisterPage() {
                   className="w-full pl-12 pr-4 py-3 text-sm bg-white border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#047857]/20 focus:border-[#047857] transition text-slate-800 placeholder-slate-400"
                 />
               </div>
-              {errors.phone && <p className="text-red-500 text-xs mt-1.5 ml-4">{errors.phone.message}</p>}
+              {errors.phone && <p className="text-red-500 text-xs mt-1.5 ml-4">{String(errors.phone.message)}</p>}
             </div>
 
             {/* Password */}
@@ -189,7 +189,7 @@ export default function RegisterPage() {
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
-              {errors.password && <p className="text-red-500 text-xs mt-1.5 ml-4">{errors.password.message}</p>}
+              {errors.password && <p className="text-red-500 text-xs mt-1.5 ml-4">{String(errors.password.message)}</p>}
             </div>
 
             {/* Submit Button */}

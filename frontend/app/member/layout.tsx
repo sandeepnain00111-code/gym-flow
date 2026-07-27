@@ -123,7 +123,7 @@ export default function MemberLayout({ children }) {
                 <span className="text-lg">✕</span>
               </button>
             </div>
-            <div className="space-y-4 pt-6 max-h-[75vh] overflow-y-auto no-scrollbar font-bold text-xs">
+            <div className="space-y-4 pt-6 max-h-[75vh] overflow-y-auto no-scrollbar font-bold text-xs" data-lenis-prevent>
               <Link href="/member/dashboard" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-slate-650 hover:text-emerald-600 transition">
                 Dashboard Overview
               </Link>

@@ -15,7 +15,7 @@ export default function FeesManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showManualForm, setShowManualForm] = useState(false);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<any>();
 
   const fetchData = async () => {
     try {
@@ -194,7 +194,7 @@ export default function FeesManagement() {
                 {...register('memberEmail', { required: 'Member email is required' })}
                 className={inputClass}
               />
-              {errors.memberEmail && <p className="text-red-500 text-[10px] mt-1">{errors.memberEmail.message}</p>}
+              {errors.memberEmail && <p className="text-red-500 text-[10px] mt-1">{String(errors.memberEmail.message)}</p>}
             </div>
 
             {/* Select Plan */}
@@ -211,7 +211,7 @@ export default function FeesManagement() {
                   </option>
                 ))}
               </select>
-              {errors.planId && <p className="text-red-500 text-[10px] mt-1">{errors.planId.message}</p>}
+              {errors.planId && <p className="text-red-500 text-[10px] mt-1">{String(errors.planId.message)}</p>}
             </div>
 
             {/* Payment Mode */}
@@ -224,7 +224,7 @@ export default function FeesManagement() {
                 <option value="cash">Cash Paid</option>
                 <option value="upi">Desk UPI Scan</option>
               </select>
-              {errors.paymentMode && <p className="text-red-500 text-[10px] mt-1">{errors.paymentMode.message}</p>}
+              {errors.paymentMode && <p className="text-red-500 text-[10px] mt-1">{String(errors.paymentMode.message)}</p>}
             </div>
 
             <div className="sm:col-span-2 flex space-x-3 pt-2 justify-end">

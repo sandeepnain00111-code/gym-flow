@@ -4,14 +4,18 @@ import React, { useState } from 'react';
 import Sidebar from '../../components/layout/Sidebar';
 import Topbar from '../../components/layout/Topbar';
 import { useAuthStore } from '../../store/authStore';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Spinner from '../../components/ui/Spinner';
 import Link from 'next/link';
 
 export default function OwnerLayout({ children }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, loading, isAuthenticated } = useAuthStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  const isProfilePage = pathname === '/owner/profile';
+  const isChallengesPage = pathname === '/owner/challenges';
 
   React.useEffect(() => {
     if (!loading) {
@@ -34,7 +38,9 @@ export default function OwnerLayout({ children }) {
   return (
     <div 
       className="min-h-screen flex text-slate-800 font-sans relative"
-      style={{
+      style={isProfilePage ? {
+        backgroundColor: '#FFFFFF'
+      } : {
         backgroundImage: "url('/bg-white-mesh.png')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -49,8 +55,8 @@ export default function OwnerLayout({ children }) {
         <Topbar onMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
 
         {/* Content Body */}
-        <main className="flex-1 p-4 sm:p-6 pt-28 sm:pt-32 overflow-x-hidden">
-          <div className="max-w-7xl mx-auto space-y-6">
+        <main className={`flex-1 ${isProfilePage ? 'px-0 pt-[68px] sm:pt-[85px] pb-4 sm:pb-6' : isChallengesPage ? 'p-4 sm:p-6 pt-24 sm:pt-[100px]' : 'p-4 sm:p-6 pt-28 sm:pt-32'} overflow-x-hidden`}>
+          <div className={`${isProfilePage ? 'max-w-full' : 'max-w-7xl'} mx-auto space-y-6`}>
             {children}
           </div>
         </main>
@@ -76,7 +82,7 @@ export default function OwnerLayout({ children }) {
                 <span className="text-lg">✕</span>
               </button>
             </div>
-            <div className="space-y-4 pt-6 max-h-[75vh] overflow-y-auto no-scrollbar">
+            <div className="space-y-4 pt-6 max-h-[75vh] overflow-y-auto no-scrollbar" data-lenis-prevent>
               <Link href="/owner/dashboard" onClick={() => setMobileMenuOpen(false)} className="block text-sm text-gray-300 hover:text-emerald-400">
                 Dashboard
               </Link>
@@ -94,6 +100,9 @@ export default function OwnerLayout({ children }) {
               </Link>
               <Link href="/owner/demo-bookings" onClick={() => setMobileMenuOpen(false)} className="block text-sm text-gray-300 hover:text-emerald-400">
                 Demo Bookings
+              </Link>
+              <Link href="/owner/challenges" onClick={() => setMobileMenuOpen(false)} className="block text-sm text-gray-300 hover:text-emerald-400">
+                Gym Challenges
               </Link>
               <Link href="/owner/fees" onClick={() => setMobileMenuOpen(false)} className="block text-sm text-gray-300 hover:text-emerald-400">
                 Fees & Payments

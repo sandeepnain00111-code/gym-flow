@@ -11,7 +11,7 @@ import { User, Phone, Lock, Save, Sparkles, Key, Mail, ShieldCheck } from 'lucid
 export default function MemberProfileSettings() {
   const { user } = useAuthStore();
   const [submitting, setSubmitting] = useState(false);
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<any>();
 
   useEffect(() => {
     if (user) {
@@ -64,7 +64,7 @@ export default function MemberProfileSettings() {
                 className="w-full pl-11 pr-4 py-3 text-xs bg-slate-50 border border-slate-200/50 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-all font-semibold"
               />
             </div>
-            {errors.name && <p className="text-red-500 text-[10px] mt-1">{errors.name.message}</p>}
+            {errors.name && <p className="text-red-500 text-[10px] mt-1">{String(errors.name.message)}</p>}
           </div>
 
           {/* Email (Readonly) */}
@@ -94,7 +94,7 @@ export default function MemberProfileSettings() {
                 className="w-full pl-11 pr-4 py-3 text-xs bg-slate-50 border border-slate-200/50 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-all font-semibold"
               />
             </div>
-            {errors.phone && <p className="text-red-500 text-[10px] mt-1">{errors.phone.message}</p>}
+            {errors.phone && <p className="text-red-500 text-[10px] mt-1">{String(errors.phone.message)}</p>}
           </div>
 
           {/* Passwords */}

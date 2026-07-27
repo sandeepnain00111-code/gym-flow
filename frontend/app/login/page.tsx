@@ -21,7 +21,7 @@ export default function LoginPage() {
     setRedirect(params.get('redirect') || '');
   }, []);
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm<any>();
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -140,7 +140,7 @@ export default function LoginPage() {
                   className="w-full pl-12 pr-4 py-3.5 text-sm bg-white border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#047857]/20 focus:border-[#047857] transition text-slate-800 placeholder-slate-400"
                 />
               </div>
-              {errors.email && <p className="text-red-500 text-xs mt-1.5 ml-4">{errors.email.message}</p>}
+              {errors.email && <p className="text-red-500 text-xs mt-1.5 ml-4">{String(errors.email.message)}</p>}
             </div>
 
             {/* Password */}
@@ -162,7 +162,7 @@ export default function LoginPage() {
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
-              {errors.password && <p className="text-red-500 text-xs mt-1.5 ml-4">{errors.password.message}</p>}
+              {errors.password && <p className="text-red-500 text-xs mt-1.5 ml-4">{String(errors.password.message)}</p>}
             </div>
 
             {/* Options */}

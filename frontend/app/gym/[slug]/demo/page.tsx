@@ -17,7 +17,7 @@ export default function BookFreeDemo() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm<any>();
 
   useEffect(() => {
     const fetchGym = async () => {
@@ -86,7 +86,7 @@ export default function BookFreeDemo() {
                   className="w-full pl-11 pr-4 py-3 text-xs glass-input rounded-xl"
                 />
               </div>
-              {errors.name && <p className="text-red-400 text-[10px] mt-1">{errors.name.message}</p>}
+              {errors.name && <p className="text-red-400 text-[10px] mt-1">{String(errors.name.message)}</p>}
             </div>
 
             {/* Email */}
@@ -104,7 +104,7 @@ export default function BookFreeDemo() {
                   className="w-full pl-11 pr-4 py-3 text-xs glass-input rounded-xl"
                 />
               </div>
-              {errors.email && <p className="text-red-400 text-[10px] mt-1">{errors.email.message}</p>}
+              {errors.email && <p className="text-red-400 text-[10px] mt-1">{String(errors.email.message)}</p>}
             </div>
 
             {/* Phone */}
@@ -119,7 +119,7 @@ export default function BookFreeDemo() {
                   className="w-full pl-11 pr-4 py-3 text-xs glass-input rounded-xl"
                 />
               </div>
-              {errors.phone && <p className="text-red-400 text-[10px] mt-1">{errors.phone.message}</p>}
+              {errors.phone && <p className="text-red-400 text-[10px] mt-1">{String(errors.phone.message)}</p>}
             </div>
 
             {/* Preferred Date */}
@@ -134,7 +134,7 @@ export default function BookFreeDemo() {
                   className="w-full pl-11 pr-4 py-3 text-xs glass-input rounded-xl text-gray-300"
                 />
               </div>
-              {errors.date && <p className="text-red-400 text-[10px] mt-1">{errors.date.message}</p>}
+              {errors.date && <p className="text-red-400 text-[10px] mt-1">{String(errors.date.message)}</p>}
             </div>
 
             {/* Time slot */}
@@ -151,7 +151,7 @@ export default function BookFreeDemo() {
                   <option value="Evening (05:00 PM - 09:00 PM)">Evening (05:00 PM - 09:00 PM)</option>
                 </select>
               </div>
-              {errors.timeSlot && <p className="text-red-400 text-[10px] mt-1">{errors.timeSlot.message}</p>}
+              {errors.timeSlot && <p className="text-red-400 text-[10px] mt-1">{String(errors.timeSlot.message)}</p>}
             </div>
 
             {/* Notes */}
@@ -160,7 +160,7 @@ export default function BookFreeDemo() {
               <div className="relative">
                 <FileText className="absolute left-3.5 top-3.5 h-4.5 w-4.5 text-gray-500" />
                 <textarea
-                  rows="2"
+                  rows={2}
                   placeholder="e.g. Weight loss, heart condition..."
                   {...register('notes')}
                   className="w-full pl-11 pr-4 py-3 text-xs glass-input rounded-xl resize-none"

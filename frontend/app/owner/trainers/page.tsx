@@ -15,7 +15,7 @@ export default function TrainersManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTrainerDetails, setSelectedTrainerDetails] = useState(null);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<any>();
 
   const fetchTrainers = async () => {
     try {
@@ -195,7 +195,7 @@ export default function TrainersManagement() {
                 {...register('name', { required: 'Trainer name is required' })}
                 className={inputClass}
               />
-              {errors.name && <p className="text-red-500 text-[10px] mt-1">{errors.name.message}</p>}
+              {errors.name && <p className="text-red-500 text-[10px] mt-1">{String(errors.name.message)}</p>}
             </div>
 
             {/* Email */}
@@ -207,7 +207,7 @@ export default function TrainersManagement() {
                 {...register('email', { required: 'Email is required' })}
                 className={inputClass}
               />
-              {errors.email && <p className="text-red-500 text-[10px] mt-1">{errors.email.message}</p>}
+              {errors.email && <p className="text-red-500 text-[10px] mt-1">{String(errors.email.message)}</p>}
             </div>
 
             {/* Specialization */}
@@ -219,7 +219,7 @@ export default function TrainersManagement() {
                 {...register('specialization', { required: 'Specialization is required' })}
                 className={inputClass}
               />
-              {errors.specialization && <p className="text-red-500 text-[10px] mt-1">{errors.specialization.message}</p>}
+              {errors.specialization && <p className="text-red-500 text-[10px] mt-1">{String(errors.specialization.message)}</p>}
             </div>
 
             {/* Shift timings */}

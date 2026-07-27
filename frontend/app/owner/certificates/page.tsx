@@ -274,7 +274,7 @@ export default function ExperienceCertificateGenerator() {
               <div>
                 <label className="block text-[10px] font-black text-slate-400 mb-1.5 uppercase tracking-wider">Appreciation Remarks</label>
                 <textarea
-                  rows="3"
+                  rows={3}
                   value={remarks}
                   onChange={(e) => setRemarks(e.target.value)}
                   className={`${inputClass} resize-none`}

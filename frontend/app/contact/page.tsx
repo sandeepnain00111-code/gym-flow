@@ -177,7 +177,7 @@ export default function ContactPage() {
               <div>
                 <label className="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">Message *</label>
                 <textarea 
-                  rows="3" 
+                  rows={3} 
                   required
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}

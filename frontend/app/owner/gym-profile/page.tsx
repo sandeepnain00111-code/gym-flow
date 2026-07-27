@@ -5,13 +5,13 @@ import api from '../../../lib/api';
 import Spinner from '../../../components/ui/Spinner';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
-import { Dumbbell, Save, MapPin, Clock, Phone, Mail, Globe, Instagram, Facebook } from 'lucide-react';
+import { Dumbbell, Save, MapPin, Clock, Phone, Mail, Globe } from 'lucide-react';
 
 export default function GymProfileManagement() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<any>();
 
   useEffect(() => {
     const fetchGymProfile = async () => {
@@ -93,14 +93,14 @@ export default function GymProfileManagement() {
                 {...register('name', { required: 'Gym name is required' })}
                 className={inputClass}
               />
-              {errors.name && <p className="text-red-500 text-[10px] mt-1">{errors.name.message}</p>}
+              {errors.name && <p className="text-red-500 text-[10px] mt-1">{String(errors.name.message)}</p>}
             </div>
 
             {/* Description */}
             <div className="sm:col-span-2">
               <label className="block text-[10px] font-black text-slate-400 mb-1.5 uppercase tracking-wider">Gym Description</label>
               <textarea
-                rows="4"
+                rows={4}
                 placeholder="Brief summary of gym focus, machinery, supplement desks..."
                 {...register('description')}
                 className={`${inputClass} resize-none`}
@@ -116,7 +116,7 @@ export default function GymProfileManagement() {
                 {...register('email', { required: 'Gym email is required' })}
                 className={inputClass}
               />
-              {errors.email && <p className="text-red-500 text-[10px] mt-1">{errors.email.message}</p>}
+              {errors.email && <p className="text-red-500 text-[10px] mt-1">{String(errors.email.message)}</p>}
             </div>
 
             {/* Phone */}
@@ -128,7 +128,7 @@ export default function GymProfileManagement() {
                 {...register('phone', { required: 'Gym phone is required' })}
                 className={inputClass}
               />
-              {errors.phone && <p className="text-red-500 text-[10px] mt-1">{errors.phone.message}</p>}
+              {errors.phone && <p className="text-red-500 text-[10px] mt-1">{String(errors.phone.message)}</p>}
             </div>
           </div>
 
@@ -147,7 +147,7 @@ export default function GymProfileManagement() {
                 {...register('address', { required: 'Address is required' })}
                 className={inputClass}
               />
-              {errors.address && <p className="text-red-500 text-[10px] mt-1">{errors.address.message}</p>}
+              {errors.address && <p className="text-red-500 text-[10px] mt-1">{String(errors.address.message)}</p>}
             </div>
 
             {/* City */}
@@ -159,7 +159,7 @@ export default function GymProfileManagement() {
                 {...register('city', { required: 'City is required' })}
                 className={inputClass}
               />
-              {errors.city && <p className="text-red-500 text-[10px] mt-1">{errors.city.message}</p>}
+              {errors.city && <p className="text-red-500 text-[10px] mt-1">{String(errors.city.message)}</p>}
             </div>
 
             {/* State */}
@@ -171,7 +171,7 @@ export default function GymProfileManagement() {
                 {...register('state', { required: 'State is required' })}
                 className={inputClass}
               />
-              {errors.state && <p className="text-red-500 text-[10px] mt-1">{errors.state.message}</p>}
+              {errors.state && <p className="text-red-500 text-[10px] mt-1">{String(errors.state.message)}</p>}
             </div>
           </div>
         </div>

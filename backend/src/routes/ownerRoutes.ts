@@ -52,7 +52,10 @@ const {
   getAttendance,
   getReports,
   getDemoBookings,
-  updateDemoBookingStatus
+  updateDemoBookingStatus,
+  getNotifications,
+  markNotificationRead,
+  markAllNotificationsRead
 } = require('../controllers/ownerController');
 
 // All routes require protection and gym_owner access
@@ -130,5 +133,10 @@ router.get('/reports',                            getReports);
 // Demo Leads
 router.get('/demo-bookings',                      getDemoBookings);
 router.patch('/demo-bookings/:id', validate(updateDemoBookingStatusSchema), updateDemoBookingStatus);
+
+// Notifications
+router.get('/notifications',                      getNotifications);
+router.patch('/notifications/:id/read',           markNotificationRead);
+router.post('/notifications/mark-all-read',       markAllNotificationsRead);
 
 module.exports = router;

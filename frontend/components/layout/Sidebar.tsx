@@ -20,7 +20,8 @@ import {
   BookOpen,
   CalendarCheck,
   LogOut,
-  Award
+  Award,
+  Trophy
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -45,6 +46,7 @@ export default function Sidebar() {
     { name: 'Gym Owners', href: '/admin/owners', icon: UserCheck },
     { name: 'Browse Gyms', href: '/admin/gyms', icon: Dumbbell },
     { name: 'All Members', href: '/admin/members', icon: Users },
+    { name: 'Promo Slider', href: '/admin/promos', icon: Megaphone },
     { name: 'Payments History', href: '/admin/payments', icon: Receipt },
     { name: 'Platform Reports', href: '/admin/reports', icon: FileBarChart },
     { name: 'Settings', href: '/admin/settings', icon: Settings }
@@ -58,6 +60,7 @@ export default function Sidebar() {
     { name: 'Members Catalog', href: '/owner/members', icon: Users },
     { name: 'Join Requests', href: '/owner/join-requests', icon: UserCheck },
     { name: 'Demo Bookings', href: '/owner/demo-bookings', icon: BookOpen },
+    { name: 'Gym Challenges', href: '/owner/challenges', icon: Trophy },
     { name: 'Fees & Renewals', href: '/owner/fees', icon: Receipt },
     { name: 'Daily Attendance', href: '/owner/attendance', icon: CalendarCheck },
     { name: 'Trainers Roster', href: '/owner/trainers', icon: UserCheck },
@@ -86,7 +89,7 @@ export default function Sidebar() {
     : ownerLinks;
 
   return (
-    <aside className="w-64 fixed top-0 left-0 h-screen flex flex-col z-20 hidden lg:flex bg-white border-r border-slate-100 shadow-sm transition-all duration-300">
+    <aside className="w-64 fixed top-0 left-0 h-screen flex flex-col z-20 hidden lg:flex bg-white border-r border-slate-100 shadow-sm transition-all duration-300" data-lenis-prevent>
       {/* Sidebar Header */}
       <div className="h-16 flex items-center px-6 border-b border-slate-100 bg-white">
         <Link href="/" className="flex items-center space-x-2">

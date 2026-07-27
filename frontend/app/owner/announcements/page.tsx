@@ -13,7 +13,7 @@ export default function AnnouncementsManagement() {
   const [submitting, setSubmitting] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<any>();
 
   const fetchAnnouncements = async () => {
     try {
@@ -106,19 +106,19 @@ export default function AnnouncementsManagement() {
                 {...register('title', { required: 'Title is required' })}
                 className="w-full px-4 py-2.5 text-xs glass-input rounded-xl"
               />
-              {errors.title && <p className="text-red-400 text-[10px] mt-1">{errors.title.message}</p>}
+              {errors.title && <p className="text-red-400 text-[10px] mt-1">{String(errors.title.message)}</p>}
             </div>
 
             {/* Content */}
             <div>
               <label className="block text-xs font-bold text-gray-400 mb-1.5 uppercase">Content Message</label>
               <textarea
-                rows="4"
+                rows={4}
                 placeholder="Write notice details to broadcast..."
                 {...register('content', { required: 'Content details are required' })}
                 className="w-full px-4 py-2.5 text-xs glass-input rounded-xl resize-none"
               />
-              {errors.content && <p className="text-red-400 text-[10px] mt-1">{errors.content.message}</p>}
+              {errors.content && <p className="text-red-400 text-[10px] mt-1">{String(errors.content.message)}</p>}
             </div>
           </div>
 

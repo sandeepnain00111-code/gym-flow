@@ -14,7 +14,7 @@ export default function OwnerPlansCRUD() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<any>();
 
   const fetchPlans = async () => {
     try {
@@ -177,7 +177,7 @@ export default function OwnerPlansCRUD() {
                 {...register('name', { required: 'Plan name is required' })}
                 className={inputClass}
               />
-              {errors.name && <p className="text-red-500 text-[10px] mt-1">{errors.name.message}</p>}
+              {errors.name && <p className="text-red-500 text-[10px] mt-1">{String(errors.name.message)}</p>}
             </div>
 
             {/* Price */}
@@ -189,7 +189,7 @@ export default function OwnerPlansCRUD() {
                 {...register('price', { required: 'Price is required' })}
                 className={inputClass}
               />
-              {errors.price && <p className="text-red-500 text-[10px] mt-1">{errors.price.message}</p>}
+              {errors.price && <p className="text-red-500 text-[10px] mt-1">{String(errors.price.message)}</p>}
             </div>
 
             {/* Duration */}
@@ -201,7 +201,7 @@ export default function OwnerPlansCRUD() {
                 {...register('durationInDays', { required: 'Duration is required' })}
                 className={inputClass}
               />
-              {errors.durationInDays && <p className="text-red-500 text-[10px] mt-1">{errors.durationInDays.message}</p>}
+              {errors.durationInDays && <p className="text-red-500 text-[10px] mt-1">{String(errors.durationInDays.message)}</p>}
             </div>
 
             {/* Features tags */}
@@ -219,7 +219,7 @@ export default function OwnerPlansCRUD() {
             <div className="sm:col-span-2">
               <label className="block text-[10px] font-black text-slate-400 mb-1.5 uppercase tracking-wider">Description Details</label>
               <textarea
-                rows="3"
+                rows={3}
                 placeholder="Detailed explanation of plan programs..."
                 {...register('description')}
                 className={`${inputClass} resize-none`}

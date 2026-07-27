@@ -343,7 +343,7 @@ export default function OwnerDashboard() {
         <DeskRevenueChart data={revenueHistory} />
 
         {/* Active programs & recommendation card */}
-        <ActiveProgramsChart />
+        <ActiveProgramsChart plans={data?.plansWithCount || []} />
       </div>
     </div>
   );

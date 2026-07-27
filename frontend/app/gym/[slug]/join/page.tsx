@@ -25,7 +25,7 @@ export default function GymMembershipJoin() {
   const [selectedPlanId, setSelectedPlanId] = useState(searchParams.get('plan') || '');
   const [paymentMode, setPaymentMode] = useState('upi');
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm<any>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -212,7 +212,7 @@ export default function GymMembershipJoin() {
                       {...register('transactionId', { required: paymentMode === 'upi' ? 'Transaction ID is required' : false })}
                       className="w-full px-4 py-3 text-xs glass-input rounded-xl"
                     />
-                    {errors.transactionId && <p className="text-red-400 text-[10px] mt-1">{errors.transactionId.message}</p>}
+                    {errors.transactionId && <p className="text-red-400 text-[10px] mt-1">{String(errors.transactionId.message)}</p>}
                   </div>
 
                   {/* Screenshot Mock url upload indicator */}

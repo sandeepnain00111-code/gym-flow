@@ -16,12 +16,80 @@ import {
   ArrowRight,
   Sparkles,
   Zap,
-  Play
+  Play,
+  ChevronLeft,
+  ChevronRight,
+  Star,
+  MapPin
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function LandingPage() {
   const { isAuthenticated, user } = useAuthStore();
+  const [activeSlide, setActiveSlide] = React.useState(0);
+  const [autoplayPaused, setAutoplayPaused] = React.useState(false);
+
+  const sponsoredGyms = [
+    {
+      id: 1,
+      name: "Iron Forge Fitness Center",
+      tagline: "Unleash your inner beast in Hyderabad's premier heavy lifting and bodybuilding arena.",
+      location: "Jubilee Hills, Hyderabad",
+      offer: "Flat 25% Off on Annual Memberships",
+      rating: "4.9 (480+ Reviews)",
+      image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop",
+      slug: "iron-forge"
+    },
+    {
+      id: 2,
+      name: "Valkyrie Cardio & HIIT Studio",
+      tagline: "High-intensity circuits, dynamic yoga spaces, and group training tailored for transformations.",
+      location: "Gachibowli, Hyderabad",
+      offer: "Get a Free 3-Day Guest Pass Today!",
+      rating: "4.8 (320+ Reviews)",
+      image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1470&auto=format&fit=crop",
+      slug: "valkyrie-studio"
+    },
+    {
+      id: 3,
+      name: "Pulse 24/7 Premium Athletics",
+      tagline: "Your goals don't sleep. Enjoy premium strength coaching, steam baths, and dynamic layouts 24/7.",
+      location: "Banjara Hills, Hyderabad",
+      offer: "Free Personal Training Session on Sign Up",
+      rating: "4.9 (510+ Reviews)",
+      image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1470&auto=format&fit=crop",
+      slug: "pulse-athletics"
+    }
+  ];
+
+  const [slides, setSlides] = React.useState(sponsoredGyms);
+
+  React.useEffect(() => {
+    const loadSlides = () => {
+      const saved = localStorage.getItem('gymflow_sponsored_gyms');
+      if (saved) {
+        try {
+          setSlides(JSON.parse(saved));
+        } catch (e) {
+          setSlides(sponsoredGyms);
+        }
+      } else {
+        setSlides(sponsoredGyms);
+      }
+    };
+
+    loadSlides();
+    window.addEventListener('storage', loadSlides);
+    return () => window.removeEventListener('storage', loadSlides);
+  }, []);
+
+  React.useEffect(() => {
+    if (autoplayPaused || slides.length === 0) return;
+    const timer = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [autoplayPaused, slides.length]);
 
   const features = [
     {
@@ -228,6 +296,116 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Sponsored Gyms Full-Width Swiper Section */}
+      {slides.length > 0 && (
+        <section 
+          className="w-full relative bg-slate-950 overflow-hidden py-1"
+          onMouseEnter={() => setAutoplayPaused(true)}
+          onMouseLeave={() => setAutoplayPaused(false)}
+        >
+          <div className="relative h-[340px] md:h-[420px] w-full overflow-hidden">
+            <AnimatePresence mode="wait">
+              {slides.map((gym, idx) => {
+                if (idx !== activeSlide) return null;
+                return (
+                  <motion.div
+                    key={gym.id}
+                    initial={{ opacity: 0, scale: 1.02 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="absolute inset-0 w-full h-full"
+                  >
+                    {/* Background Image with darken gradient overlays */}
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center select-none"
+                      style={{ backgroundImage: `url('${gym.image}')` }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-transparent z-10" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent z-10" />
+
+                    {/* Slide Content Box */}
+                    <div className="relative z-20 max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 h-full flex flex-col justify-center text-white">
+                      <div className="max-w-xl space-y-4">
+                        {/* Premium Badge */}
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-black uppercase tracking-widest shadow-sm">
+                          <Sparkles className="h-3 w-3" />
+                          <span>Featured Gym Partner</span>
+                        </div>
+
+                        {/* Gym Name & Tagline */}
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-none text-white drop-shadow-md">
+                          {gym.name}
+                        </h2>
+                        <p className="text-slate-300 text-xs md:text-sm font-medium leading-relaxed drop-shadow-sm">
+                          {gym.tagline}
+                        </p>
+
+                        {/* Location & Rating */}
+                        <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-300 pt-1">
+                          <div className="flex items-center gap-1">
+                            <MapPin className="h-4 w-4 text-emerald-400" />
+                            <span>{gym.location}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                            <span>{gym.rating}</span>
+                          </div>
+                        </div>
+
+                        {/* Promotional Offer Alert box */}
+                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex justify-between gap-4 items-center mt-4">
+                          <div>
+                            <p className="text-[9px] font-black text-slate-450 uppercase tracking-widest">Exclusive Deal</p>
+                            <p className="text-xs sm:text-sm font-black text-emerald-400 mt-0.5">{gym.offer}</p>
+                          </div>
+                          <Link
+                            href={`/gym/${gym.slug}/join`}
+                            className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition duration-300 shadow-md shadow-emerald-500/10 flex-shrink-0"
+                          >
+                            <span>Claim Offer</span>
+                            <ArrowRight className="h-3.5 w-3.5" />
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+
+            {/* Left/Right Navigation buttons */}
+            <button
+              onClick={() => setActiveSlide((prev) => (prev - 1 + slides.length) % slides.length)}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-2 md:p-3 rounded-full bg-slate-900/40 hover:bg-emerald-500 text-white hover:text-slate-950 border border-white/10 hover:border-emerald-400 transition-all duration-300 backdrop-blur-md shadow-lg cursor-pointer"
+              title="Previous Gym Slide"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => setActiveSlide((prev) => (prev + 1) % slides.length)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-2 md:p-3 rounded-full bg-slate-900/40 hover:bg-emerald-500 text-white hover:text-slate-950 border border-white/10 hover:border-emerald-400 transition-all duration-300 backdrop-blur-md shadow-lg cursor-pointer"
+              title="Next Gym Slide"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+
+            {/* Slide Indicators / Dots */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 bg-slate-900/30 px-3.5 py-2 rounded-full border border-white/5 backdrop-blur-sm">
+              {slides.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveSlide(idx)}
+                  className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                    idx === activeSlide ? 'w-6 bg-emerald-500' : 'w-2.5 bg-white/40 hover:bg-white'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Core Flow Features */}
       <section

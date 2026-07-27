@@ -87,16 +87,17 @@ const dummyMessages = [
 
 export default function ChatContainer({ gymId, gymName }) {
   const { user } = useAuthStore();
-  const [messages, setMessages] = useState(dummyMessages);
+  const [messages, setMessages] = useState<any[]>(dummyMessages);
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
   const [socketConnected, setSocketConnected] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [typingUser, setTypingUser] = useState('');
-  const [reactions, setReactions] = useState({}); // { [msgId]: { emoji: count } }
+  const [reactions, setReactions] = useState<any>({}); // { [msgId]: { emoji: count } }
+  const [dmHistory, setDmHistory] = useState<any>({});
 
   // Channel switcher state ('lounge' or participant object)
-  const [activeChat, setActiveChat] = useState('lounge');
+  const [activeChat, setActiveChat] = useState<any>('lounge');
 
   // Sidebar Tab state ('members' or 'history')
   const [sidebarTab, setSidebarTab] = useState('members');
@@ -135,7 +136,7 @@ export default function ChatContainer({ gymId, gymName }) {
   // Sound generator
   const playSoundEffect = (freq = 880, duration = 0.1) => {
     try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
@@ -734,7 +735,7 @@ export default function ChatContainer({ gymId, gymName }) {
         </AnimatePresence>
 
         {/* Messages Feed */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-slate-200 no-scrollbar bg-slate-50/20">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-slate-200 no-scrollbar bg-slate-50/20" data-lenis-prevent>
           {loading && isGlobalChat ? (
             <div className="h-full flex items-center justify-center">
               <Spinner size="lg" />
@@ -784,7 +785,7 @@ export default function ChatContainer({ gymId, gymName }) {
 
                             {Object.keys(msgReactions).length > 0 && (
                               <div className="flex gap-1.5 mt-2 flex-wrap">
-                                {Object.entries(msgReactions).map(([emoji, count]) => (
+                                {Object.entries(msgReactions as any).map(([emoji, count]: any) => (
                                   <span key={emoji} className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-slate-50 border border-slate-200 text-[9px] text-slate-700 font-bold">
                                     <span>{emoji}</span>
                                     <span className="font-extrabold text-[8px]">{count}</span>
@@ -911,7 +912,7 @@ export default function ChatContainer({ gymId, gymName }) {
 
           {/* TAB 1: MEMBERS DIRECTORY */}
           {sidebarTab === 'members' && (
-            <div className="flex flex-col space-y-4 flex-1 overflow-y-auto no-scrollbar">
+            <div className="flex flex-col space-y-4 flex-1 overflow-y-auto no-scrollbar" data-lenis-prevent>
               
               {/* Premium Live Search Bar */}
               <div className="relative">
@@ -1032,7 +1033,7 @@ export default function ChatContainer({ gymId, gymName }) {
 
           {/* TAB 2: CALL LOGS HISTORY */}
           {sidebarTab === 'history' && (
-            <div className="flex flex-col space-y-4 flex-1 overflow-y-auto no-scrollbar">
+            <div className="flex flex-col space-y-4 flex-1 overflow-y-auto no-scrollbar" data-lenis-prevent>
               
               <div className="flex items-center space-x-2 pb-2 border-b border-slate-200/80">
                 <Calendar className="h-4 w-4 text-slate-500" />

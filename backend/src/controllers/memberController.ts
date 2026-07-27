@@ -9,6 +9,7 @@ const WorkoutPlan = require('../models/WorkoutPlan');
 const DietPlan = require('../models/DietPlan');
 const ProgressLog = require('../models/ProgressLog');
 const Announcement = require('../models/Announcement');
+const Notification = require('../models/Notification');
 
 // @desc    Get member dashboard details
 // @route   GET /api/member/dashboard
@@ -202,6 +203,15 @@ exports.joinGym = async (req, res, next) => {
 
     // Link user to this gym
     await User.findByIdAndUpdate(req.user._id, { gymId: gym._id });
+
+    // Create notification for gym owner
+    await Notification.create({
+      userId: gym.ownerId,
+      title: 'New Membership Request',
+      message: `${req.user.name} has requested access to join with the plan ${plan.name}.`,
+      type: 'membership_request',
+      isRead: false
+    });
 
     res.status(201).json({
       success: true,

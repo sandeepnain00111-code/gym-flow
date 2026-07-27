@@ -88,6 +88,9 @@ export default function AdminLayout({ children }) {
               <Link href="/admin/members" onClick={() => setMobileMenuOpen(false)} className="block text-sm text-gray-300 hover:text-emerald-400">
                 Members
               </Link>
+              <Link href="/admin/promos" onClick={() => setMobileMenuOpen(false)} className="block text-sm text-gray-300 hover:text-emerald-400">
+                Promo Slider
+              </Link>
               <Link href="/admin/payments" onClick={() => setMobileMenuOpen(false)} className="block text-sm text-gray-300 hover:text-emerald-400">
                 Payments
               </Link>
