@@ -8,9 +8,26 @@ import { toast } from 'react-hot-toast';
 import { QrCode, Printer, Download, Dumbbell, ShieldCheck, HelpCircle } from 'lucide-react';
 
 export default function QRConsole() {
+  const mockGym = {
+    _id: 'iron-forge',
+    name: 'Iron Forge Fitness Club',
+    description: 'Gold class gym equipment and professional strength coaches.'
+  };
+
   const [gym, setGym] = useState(null);
   const [loading, setLoading] = useState(true);
   const printRef = useRef(null);
+
+  // The QR scanner value is the gym registration/join URL
+  const [qrValue, setQrValue] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const origin = window.location.origin;
+      const slug = gym?.slug || 'iron-forge';
+      setQrValue(`${origin}/gym/${slug}/join`);
+    }
+  }, [gym]);
 
   useEffect(() => {
     const fetchGym = async () => {
@@ -30,12 +47,6 @@ export default function QRConsole() {
     fetchGym();
   }, []);
 
-  const mockGym = {
-    _id: 'mock-gym-101',
-    name: 'Iron Forge Fitness Club',
-    description: 'Gold class gym equipment and professional strength coaches.'
-  };
-
   const handlePrint = () => {
     if (typeof window !== 'undefined') {
       window.print();
@@ -49,13 +60,6 @@ export default function QRConsole() {
       </div>
     );
   }
-
-  // The QR scanner value is the Gym ID
-  const qrValue = JSON.stringify({
-    gymId: gym?._id || 'mock-gym-101',
-    gymName: gym?.name || 'Iron Forge Fitness Club',
-    type: 'check_in'
-  });
 
   return (
     <div className="space-y-6">

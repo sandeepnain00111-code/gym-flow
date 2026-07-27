@@ -29,11 +29,12 @@ export default function Sidebar() {
   const { user, logout } = useAuthStore();
 
   const handleSwitchRole = (targetRole) => {
-    localStorage.setItem('accessToken', 'dev-bypass-token');
     if (targetRole === 'super_admin') {
+      localStorage.setItem('accessToken', 'dev-bypass-token-admin');
       localStorage.setItem('user', JSON.stringify({ name: 'Dev Admin', role: 'super_admin', email: 'admin@gymflow.com' }));
       window.location.href = '/admin/dashboard';
     } else {
+      localStorage.setItem('accessToken', 'dev-bypass-token-owner');
       localStorage.setItem('user', JSON.stringify({ name: 'Dev Gym Owner', role: 'gym_owner', email: 'owner@gymflow.com' }));
       window.location.href = '/owner/dashboard';
     }

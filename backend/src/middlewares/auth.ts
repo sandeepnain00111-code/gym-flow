@@ -19,6 +19,24 @@ const protect = async (req, res, next) => {
   }
 
   try {
+    // DEV BYPASS TOKEN SUPPORT
+    if (typeof token === 'string' && token.startsWith('dev-bypass-token')) {
+      let email = 'admin@gymflow.com';
+      if (token === 'dev-bypass-token-owner' || token === 'dev-bypass-token') {
+        email = 'owner@gymflow.com';
+      } else if (token === 'dev-bypass-token-member') {
+        email = 'member@gymflow.com';
+      } else if (token === 'dev-bypass-token-admin') {
+        email = 'admin@gymflow.com';
+      }
+
+      const user = await User.findOne({ email }).select('-password');
+      if (user) {
+        req.user = user;
+        return next();
+      }
+    }
+
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET || 'gymflow_access_secret_key_123456789!');
 

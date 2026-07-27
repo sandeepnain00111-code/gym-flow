@@ -5,7 +5,7 @@ const router = express.Router();
 const { protect, authorize } = require('../middlewares/auth');
 const validate = require('../middlewares/validate');
 const { saveGymProfileSchema, createPlanSchema, updatePlanSchema, createTrainerSchema, updateTrainerSchema, createWorkoutPlanSchema, updateWorkoutPlanSchema, createDietPlanSchema, updateDietPlanSchema, createAnnouncementSchema, updateAnnouncementSchema, createManualPaymentSchema, updateDemoBookingStatusSchema } = require('../validators/ownerValidators');
-const { getDashboardStats, getGymProfile, saveGymProfile, generateQR, getPlans, createPlan, updatePlan, deletePlan, getMembers, getJoinRequests, approveJoinRequest, rejectJoinRequest, getTrainers, createTrainer, updateTrainer, deleteTrainer, getWorkoutPlans, createWorkoutPlan, updateWorkoutPlan, deleteWorkoutPlan, getDietPlans, createDietPlan, updateDietPlan, deleteDietPlan, getAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement, getPayments, approvePayment, createManualPayment, getAttendance, getReports, getDemoBookings, updateDemoBookingStatus } = require('../controllers/ownerController');
+const { getDashboardStats, getGymProfile, saveGymProfile, generateQR, getPlans, createPlan, updatePlan, deletePlan, getMembers, getJoinRequests, approveJoinRequest, rejectJoinRequest, getTrainers, createTrainer, updateTrainer, deleteTrainer, getWorkoutPlans, createWorkoutPlan, updateWorkoutPlan, deleteWorkoutPlan, getDietPlans, createDietPlan, updateDietPlan, deleteDietPlan, getAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement, getPayments, approvePayment, createManualPayment, getAttendance, getReports, getDemoBookings, updateDemoBookingStatus, getNotifications, markNotificationRead, markAllNotificationsRead } = require('../controllers/ownerController');
 // All routes require protection and gym_owner access
 router.use(protect, authorize('gym_owner'));
 router.get('/dashboard', getDashboardStats);
@@ -64,4 +64,8 @@ router.get('/reports', getReports);
 // Demo Leads
 router.get('/demo-bookings', getDemoBookings);
 router.patch('/demo-bookings/:id', validate(updateDemoBookingStatusSchema), updateDemoBookingStatus);
+// Notifications
+router.get('/notifications', getNotifications);
+router.patch('/notifications/:id/read', markNotificationRead);
+router.post('/notifications/mark-all-read', markAllNotificationsRead);
 module.exports = router;

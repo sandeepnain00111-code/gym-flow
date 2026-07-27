@@ -85,7 +85,7 @@ export default function LoginPage() {
             <button 
               type="button" 
               onClick={() => {
-                localStorage.setItem('accessToken', 'dev-bypass-token');
+                localStorage.setItem('accessToken', 'dev-bypass-token-admin');
                 localStorage.setItem('user', JSON.stringify({ name: 'Dev Admin', role: 'super_admin', email: 'admin@gymflow.com' }));
                 window.location.href = '/admin/dashboard';
               }}
@@ -96,7 +96,7 @@ export default function LoginPage() {
             <button 
               type="button" 
               onClick={() => {
-                localStorage.setItem('accessToken', 'dev-bypass-token');
+                localStorage.setItem('accessToken', 'dev-bypass-token-owner');
                 localStorage.setItem('user', JSON.stringify({ name: 'Dev Gym Owner', role: 'gym_owner', email: 'owner@gymflow.com' }));
                 window.location.href = '/owner/dashboard';
               }}
@@ -107,7 +107,7 @@ export default function LoginPage() {
             <button 
               type="button" 
               onClick={() => {
-                localStorage.setItem('accessToken', 'dev-bypass-token');
+                localStorage.setItem('accessToken', 'dev-bypass-token-member');
                 localStorage.setItem('isDevMemberBypass', 'true');
                 localStorage.setItem('user', JSON.stringify({ name: 'Dev Member', role: 'member', email: 'member@gymflow.com' }));
                 window.location.href = '/member/dashboard';

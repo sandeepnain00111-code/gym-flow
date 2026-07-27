@@ -12,6 +12,7 @@ const WorkoutPlan = require('../models/WorkoutPlan');
 const DietPlan = require('../models/DietPlan');
 const Announcement = require('../models/Announcement');
 const Invoice = require('../models/Invoice');
+const Notification = require('../models/Notification');
 // Helper to get Gym ID for the logged in Owner
 const getOwnerGym = async (ownerId) => {
     const gym = await Gym.findOne({ ownerId });
@@ -876,6 +877,94 @@ exports.updateDemoBookingStatus = async (req, res, next) => {
         }
         const updatedDemo = await DemoBooking.findByIdAndUpdate(req.params.id, { status }, { new: true });
         res.json({ success: true, demo: updatedDemo });
+    }
+    catch (error) {
+        next(error);
+    }
+};
+// Helper function to check for memberships expiring in exactly 2 days
+const checkExpiringMemberships = async (gymId, ownerId) => {
+    try {
+        const activeMemberships = await Membership.find({
+            gymId,
+            status: 'active'
+        }).populate('memberId');
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        for (const membership of activeMemberships) {
+            if (!membership.endDate || !membership.memberId)
+                continue;
+            const endDate = new Date(membership.endDate);
+            endDate.setHours(0, 0, 0, 0);
+            const diffTime = endDate.getTime() - today.getTime();
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+            // Check if it is exactly 2 days left
+            if (diffDays === 2) {
+                const memberName = membership.memberId.name;
+                const exists = await Notification.findOne({
+                    userId: ownerId,
+                    type: 'membership_expiry',
+                    message: new RegExp(memberName, 'i')
+                });
+                if (!exists) {
+                    await Notification.create({
+                        userId: ownerId,
+                        title: 'Membership Expiry Alert',
+                        message: `Membership for ${memberName} is expiring in 2 days.`,
+                        type: 'membership_expiry',
+                        isRead: false
+                    });
+                }
+            }
+        }
+    }
+    catch (error) {
+        console.error('Error checking expiring memberships:', error);
+    }
+};
+// @desc    Get owner alert notifications
+// @route   GET /api/owner/notifications
+// @access  Private (gym_owner)
+exports.getNotifications = async (req, res, next) => {
+    try {
+        const gym = await Gym.findOne({ ownerId: req.user._id });
+        if (!gym) {
+            return res.json({ success: true, notifications: [] });
+        }
+        // Run dynamic check for expiring memberships
+        await checkExpiringMemberships(gym._id, req.user._id);
+        const notifications = await Notification.find({ userId: req.user._id })
+            .sort({ createdAt: -1 })
+            .limit(50);
+        res.json({ success: true, notifications });
+    }
+    catch (error) {
+        next(error);
+    }
+};
+// @desc    Mark notification as read
+// @route   PATCH /api/owner/notifications/:id/read
+// @access  Private (gym_owner)
+exports.markNotificationRead = async (req, res, next) => {
+    try {
+        const notification = await Notification.findOneAndUpdate({ _id: req.params.id, userId: req.user._id }, { isRead: true }, { new: true });
+        if (!notification) {
+            res.status(404);
+            throw new Error('Notification not found');
+        }
+        res.json({ success: true, notification });
+    }
+    catch (error) {
+        next(error);
+    }
+};
+// @desc    Mark all notifications as read
+// @route   POST /api/owner/notifications/mark-all-read
+// @access  Private (gym_owner)
+exports.markAllNotificationsRead = async (req, res, next) => {
+    try {
+        await Notification.updateMany({ userId: req.user._id, isRead: false }, { isRead: true });
+        res.json({ success: true, message: 'All notifications marked as read' });
     }
     catch (error) {
         next(error);

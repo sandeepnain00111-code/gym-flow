@@ -234,13 +234,39 @@ exports.scanQR = async (req, res, next) => {
       throw new Error('No QR data found in scan');
     }
 
+    let targetQrData = qrData;
+    // Check if the qrData is a JSON string and parse it if so
+    if (typeof qrData === 'string' && qrData.trim().startsWith('{')) {
+      try {
+        const parsed = JSON.parse(qrData);
+        targetQrData = parsed.gymId || parsed.slug || qrData;
+      } catch (e) {
+        // Fall back to original qrData if parsing fails
+      }
+    }
+
+    // If it's a URL, extract the slug from /gym/<slug>
+    if (typeof targetQrData === 'string' && targetQrData.includes('/gym/')) {
+      const parts = targetQrData.split('/gym/');
+      if (parts[1]) {
+        targetQrData = parts[1].split('/')[0];
+      }
+    }
+
+    // Special fallback for mock-gym-101 to map it to the seeded gym 'iron-forge'
+    if (targetQrData === 'mock-gym-101') {
+      targetQrData = 'iron-forge';
+    }
+
+    console.log('Processed QR check-in scan:', { original: qrData, resolved: targetQrData });
+
     // Identify gym using either slug or code
     let gym;
-    if (require('mongoose').Types.ObjectId.isValid(qrData)) {
-      gym = await Gym.findById(qrData);
+    if (require('mongoose').Types.ObjectId.isValid(targetQrData)) {
+      gym = await Gym.findById(targetQrData);
     }
     if (!gym) {
-      gym = await Gym.findOne({ $or: [{ slug: qrData }, { qrCodeUrl: qrData }] });
+      gym = await Gym.findOne({ $or: [{ slug: targetQrData }, { qrCodeUrl: targetQrData }] });
     }
     if (!gym) {
       res.status(404);
