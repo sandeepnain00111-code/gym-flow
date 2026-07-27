@@ -36,6 +36,19 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: ''
     },
+    age: {
+      type: Number,
+      default: null
+    },
+    weight: {
+      type: Number,
+      default: null
+    },
+    purpose: {
+      type: String,
+      enum: ['weight_gain', 'weight_loss', 'fitness', ''],
+      default: ''
+    },
     status: {
       type: String,
       enum: ['pending', 'active', 'rejected', 'blocked'],

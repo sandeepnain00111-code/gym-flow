@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import Spinner from '../../components/ui/Spinner';
 import { Dumbbell, User, Mail, Phone, Lock, Eye, EyeOff, Building, CheckCircle } from 'lucide-react';
+import api from '../../lib/api';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -20,6 +21,21 @@ export default function RegisterPage() {
   const [isFromGymQR, setIsFromGymQR] = useState(false);
   const [role, setRole] = useState('gym_owner');
 
+  // Member registration specific states
+  const [gyms, setGyms] = useState<any[]>([]);
+  const [selectedGymSlug, setSelectedGymSlug] = useState('');
+  const [plans, setPlans] = useState<any[]>([]);
+  const [selectedPlanId, setSelectedPlanId] = useState('');
+  const [submittingMember, setSubmittingMember] = useState(false);
+
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<any>();
+
+  // Reset form errors and inputs when the active tab/role changes
+  useEffect(() => {
+    reset();
+  }, [role, reset]);
+
+  // Initial load
   useEffect(() => {
     setError(null);
     const params = new URLSearchParams(window.location.search);
@@ -27,25 +43,108 @@ export default function RegisterPage() {
     setRedirect(redir);
     const qr = redir.startsWith('/gym/');
     setIsFromGymQR(qr);
-    if (qr) setRole('member');
-  }, []);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<any>();
+    const roleParam = params.get('role');
+    if (roleParam === 'member' || qr) {
+      setRole('member');
+    } else {
+      setRole('gym_owner');
+    }
+
+    // Fetch active gyms for membership registrations
+    const fetchGyms = async () => {
+      try {
+        const res = await api.get('/public/gyms');
+        if (res.data.success) {
+          setGyms(res.data.gyms);
+          if (qr) {
+            const slugPart = redir.split('/gym/')[1]?.split('/')[0] || '';
+            if (slugPart) {
+              setSelectedGymSlug(slugPart);
+              return;
+            }
+          }
+          if (res.data.gyms.length > 0) {
+            setSelectedGymSlug(res.data.gyms[0].slug);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch gyms:', err);
+      }
+    };
+    fetchGyms();
+  }, [setError]);
+
+  // Fetch plans of the selected gym
+  useEffect(() => {
+    const fetchPlans = async () => {
+      if (!selectedGymSlug) return;
+      try {
+        const res = await api.get(`/public/gym/${selectedGymSlug}/plans`);
+        if (res.data.success) {
+          setPlans(res.data.plans);
+          if (res.data.plans.length > 0) {
+            setSelectedPlanId(res.data.plans[0]._id);
+          } else {
+            setSelectedPlanId('');
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch plans:', err);
+      }
+    };
+    fetchPlans();
+  }, [selectedGymSlug]);
 
   const onSubmit = async (data) => {
     try {
-      const payload = {
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        password: data.password,
-        role
-      };
-
-      const result = await signup(payload);
       if (role === 'gym_owner') {
+        const payload = {
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          password: data.password,
+          role: 'gym_owner'
+        };
+
+        await signup(payload);
         setOwnerPendingModal(true);
       } else {
+        setSubmittingMember(true);
+        // 1. Sign up the user account
+        const selectedGym = gyms.find(g => g.slug === selectedGymSlug);
+        const signupPayload = {
+          name: `${data.firstName} ${data.lastName}`,
+          email: data.email,
+          phone: data.phone,
+          password: data.password,
+          role: 'member',
+          gymId: selectedGym?._id || null,
+          purpose: data.purpose || '',
+          age: data.age ? Number(data.age) : null,
+          weight: data.weight ? Number(data.weight) : null
+        };
+
+        const user = await signup(signupPayload);
+        if (!user) {
+          throw new Error('Registration failed, please check details.');
+        }
+
+        // 2. Submit join request for selected plan & duration
+        if (selectedPlanId) {
+          const selectedPlan = plans.find((p) => p._id === selectedPlanId);
+          if (selectedPlan) {
+            const postData = {
+              planId: selectedPlanId,
+              paymentMode: 'cash', // default payment mode for general registrations
+              transactionId: '',
+              screenshot: 'https://images.unsplash.com/photo-1621416894569-0f39ed31d247?q=80&w=400&auto=format&fit=crop',
+              amount: selectedPlan.price
+            };
+            await api.post(`/member/join/${selectedGymSlug}`, postData);
+          }
+        }
+
         toast.success('Registration successful! Welcome to GymFlow! 💪');
         if (redirect) {
           router.push(redirect);
@@ -53,8 +152,10 @@ export default function RegisterPage() {
           router.push('/member/dashboard');
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err.message || 'Registration failed, please try again');
+    } finally {
+      setSubmittingMember(false);
     }
   };
 
@@ -80,19 +181,47 @@ export default function RegisterPage() {
             <span className="text-2xl font-extrabold text-slate-900 tracking-tight">GymFlow</span>
           </div>
 
+          {/* Role Tab Selector (Only show if not directly coming from specific Gym QR check-in) */}
+          {!isFromGymQR && (
+            <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100/80 border border-slate-200/50 rounded-full mb-6 max-w-[320px]">
+              <button
+                type="button"
+                onClick={() => setRole('gym_owner')}
+                className={`py-2 px-4 text-xs font-extrabold rounded-full transition-all duration-300 ${
+                  role === 'gym_owner'
+                    ? 'bg-[#047857] text-white shadow-md'
+                    : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                Gym Owner
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole('member')}
+                className={`py-2 px-4 text-xs font-extrabold rounded-full transition-all duration-300 ${
+                  role === 'member'
+                    ? 'bg-[#047857] text-white shadow-md'
+                    : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                Gym Member
+              </button>
+            </div>
+          )}
+
           <h1 className="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">
-            {isFromGymQR ? 'Member Registration' : 'Create Owner Account'}
+            {role === 'member' ? 'Member Registration' : 'Create Owner Account'}
           </h1>
           <p className="text-slate-500 text-sm mb-6">
-            {isFromGymQR ? 'Join your gym and access active fitness plans' : 'Start your digital gym transformation today'}
+            {role === 'member' ? 'Join a gym and access active fitness plans' : 'Start your digital gym transformation today'}
           </p>
 
           {/* Registration Notice */}
-          {isFromGymQR ? (
+          {role === 'member' ? (
             <div className="flex gap-3 p-4 bg-emerald-50 border border-emerald-100 rounded-xl mb-6">
               <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
               <p className="text-[11px] text-slate-600 leading-relaxed">
-                <strong>Gym Member Portal - Note:</strong> You are scanning and registering to access plans at this gym. Your membership request will be processed instantly.
+                <strong>Gym Member Portal - Note:</strong> You are registering to join your selected gym. Select a plan to request immediate access.
               </p>
             </div>
           ) : (
@@ -113,20 +242,122 @@ export default function RegisterPage() {
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Name */}
-            <div>
-              <label className="block text-[10px] font-bold text-slate-500 mb-1.5 uppercase tracking-widest">Full Name</label>
-              <div className="relative">
-                <User className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="John Doe"
-                  {...register('name', { required: 'Name is required' })}
-                  className="w-full pl-12 pr-4 py-3 text-sm bg-white border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#047857]/20 focus:border-[#047857] transition text-slate-800 placeholder-slate-400"
-                />
+            {role === 'gym_owner' ? (
+              /* OWNER FULL NAME */
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 mb-1.5 uppercase tracking-widest">Full Name</label>
+                <div className="relative">
+                  <User className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="John Doe"
+                    {...register('name', { required: role === 'gym_owner' ? 'Name is required' : false })}
+                    className="w-full pl-12 pr-4 py-3 text-sm bg-white border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#047857]/20 focus:border-[#047857] transition text-slate-800 placeholder-slate-400"
+                  />
+                </div>
+                {errors.name && <p className="text-red-500 text-xs mt-1.5 ml-4">{String(errors.name.message)}</p>}
               </div>
-              {errors.name && <p className="text-red-500 text-xs mt-1.5 ml-4">{String(errors.name.message)}</p>}
-            </div>
+            ) : (
+              /* MEMBER FIELDS */
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-500 mb-1.5 uppercase tracking-widest">First Name</label>
+                    <div className="relative">
+                      <User className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+                      <input
+                        type="text"
+                        placeholder="John"
+                        {...register('firstName', { required: role === 'member' ? 'First name is required' : false })}
+                        className="w-full pl-12 pr-4 py-3 text-sm bg-white border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#047857]/20 focus:border-[#047857] transition text-slate-800 placeholder-slate-400"
+                      />
+                    </div>
+                    {errors.firstName && <p className="text-red-500 text-xs mt-1.5 ml-4">{String(errors.firstName.message)}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-500 mb-1.5 uppercase tracking-widest">Last Name</label>
+                    <div className="relative">
+                      <User className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+                      <input
+                        type="text"
+                        placeholder="Doe"
+                        {...register('lastName', { required: role === 'member' ? 'Last name is required' : false })}
+                        className="w-full pl-12 pr-4 py-3 text-sm bg-white border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#047857]/20 focus:border-[#047857] transition text-slate-800 placeholder-slate-400"
+                      />
+                    </div>
+                    {errors.lastName && <p className="text-red-500 text-xs mt-1.5 ml-4">{String(errors.lastName.message)}</p>}
+                  </div>
+                </div>
+
+                {/* Gym Selection */}
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 mb-1.5 uppercase tracking-widest">Select Gym</label>
+                  <div className="relative">
+                    <Building className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+                    <select
+                      value={selectedGymSlug}
+                      onChange={(e) => setSelectedGymSlug(e.target.value)}
+                      className="w-full pl-12 pr-10 py-3 text-sm bg-white border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#047857]/20 focus:border-[#047857] transition text-slate-800 appearance-none outline-none cursor-pointer"
+                    >
+                      <option value="">Select a Gym...</option>
+                      {gyms.map((g: any) => (
+                        <option key={g.slug} value={g.slug}>
+                          {g.name} ({g.city})
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-4 top-4 pointer-events-none text-slate-450">
+                      <span className="text-[10px]">▼</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Plan Selection (Duration) */}
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 mb-1.5 uppercase tracking-widest">Duration (Select Plan)</label>
+                  <div className="relative">
+                    <Dumbbell className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
+                    <select
+                      value={selectedPlanId}
+                      onChange={(e) => setSelectedPlanId(e.target.value)}
+                      className="w-full pl-12 pr-10 py-3 text-sm bg-white border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#047857]/20 focus:border-[#047857] transition text-slate-800 appearance-none outline-none cursor-pointer"
+                    >
+                      <option value="">Select a Duration...</option>
+                      {plans.map((p: any) => (
+                        <option key={p._id} value={p._id}>
+                          {p.name} ({p.durationInDays} Days) - ₹{p.price}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-4 top-4 pointer-events-none text-slate-450">
+                      <span className="text-[10px]">▼</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Purpose Selector */}
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 mb-1.5 uppercase tracking-widest">Fitness Goal (Purpose)</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-3.5 h-5 w-5 text-slate-400 flex items-center justify-center font-bold text-xs">🎯</span>
+                    <select
+                      {...register('purpose', { required: role === 'member' ? 'Goal is required' : false })}
+                      className="w-full pl-12 pr-10 py-3 text-sm bg-white border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-[#047857]/20 focus:border-[#047857] transition text-slate-800 appearance-none outline-none cursor-pointer"
+                    >
+                      <option value="">Choose a Goal...</option>
+                      <option value="weight_gain">Weight Gain</option>
+                      <option value="weight_loss">Weight Loss</option>
+                      <option value="fitness">General Fitness</option>
+                    </select>
+                    <div className="absolute right-4 top-4 pointer-events-none text-slate-450">
+                      <span className="text-[10px]">▼</span>
+                    </div>
+                  </div>
+                  {errors.purpose && <p className="text-red-500 text-xs mt-1.5 ml-4">{String(errors.purpose.message)}</p>}
+                </div>
+              </>
+            )}
 
             {/* Email Address */}
             <div>
@@ -195,10 +426,10 @@ export default function RegisterPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || submittingMember}
               className="w-full bg-[#00e676] hover:bg-[#00c853] text-slate-900 font-bold py-3.5 rounded-full text-sm flex items-center justify-center space-x-2 transition shadow-lg shadow-[#00e676]/20 mt-6"
             >
-              {loading ? <Spinner size="sm" /> : <span>Create SaaS Account</span>}
+              {loading || submittingMember ? <Spinner size="sm" /> : <span>{role === 'gym_owner' ? 'Create SaaS Account' : 'Create Account & Join Gym'}</span>}
             </button>
           </form>
 

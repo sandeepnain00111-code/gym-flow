@@ -9,7 +9,11 @@ const registerSchema = Joi.object({
   }),
   password: Joi.string().min(6).max(128).required(),
   role:     Joi.string().valid('member', 'gym_owner', 'trainer').default('member'),
-  gymId:    Joi.string().hex().length(24).allow(null, '').optional() // ObjectId
+  gymId:    Joi.string().hex().length(24).allow(null, '').optional(), // ObjectId
+  avatar:   Joi.string().allow(null, '').optional(),
+  age:      Joi.number().min(1).max(120).allow(null, '').optional(),
+  weight:   Joi.number().min(1).max(500).allow(null, '').optional(),
+  purpose:  Joi.string().valid('weight_gain', 'weight_loss', 'fitness', '').allow(null, '').optional()
 });
 
 // POST /api/auth/login
@@ -34,7 +38,10 @@ const updateProfileSchema = Joi.object({
   name:            Joi.string().trim().min(2).max(100).optional(),
   phone:           Joi.string().trim().min(7).max(15).optional(),
   currentPassword: Joi.string().optional(),
-  newPassword:     Joi.string().min(6).max(128).optional()
+  newPassword:     Joi.string().min(6).max(128).optional(),
+  age:             Joi.number().min(1).max(120).allow(null, '').optional(),
+  weight:          Joi.number().min(1).max(500).allow(null, '').optional(),
+  purpose:         Joi.string().valid('weight_gain', 'weight_loss', 'fitness', '').allow(null, '').optional()
 });
 
 module.exports = {

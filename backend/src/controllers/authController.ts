@@ -52,6 +52,10 @@ exports.register = async (req, res, next) => {
       password,
       role: role || 'member',
       gymId: gymId || null,
+      avatar: req.body.avatar || '',
+      age: req.body.age || null,
+      weight: req.body.weight || null,
+      purpose: req.body.purpose || '',
       status: role === 'gym_owner' ? 'pending' : 'active'
     });
 
